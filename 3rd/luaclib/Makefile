@@ -3,8 +3,8 @@ include ../../platform.mk
 LUACLIB_DIR = ../../luaclib
 
 LUACLIB_NAMES = cjson laoi ldump\
-		lunix lfs proc bs crypto \
-		lastar msgpack lzf liconv lkazmath lmisc #lsqlite3 
+		lunix lfs proc bitstring crypto \
+		lastar msgpack lzf liconv lkazmath misc #lsqlite3 
 
 CFLAGS = -g -O2 -Wall -I$(LUA_INC) $(MYCFLAGS)
 LUA_INC ?= ../lua
@@ -34,7 +34,7 @@ $(LUACLIB_DIR)/lfs.so : lfs.c
 $(LUACLIB_DIR)/liconv.so : liconv.c
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
 
-$(LUACLIB_DIR)/bs.so : bitstring/lbitstring.c
+$(LUACLIB_DIR)/bitstring.so : bitstring/lbitstring.c
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
 
 $(LUACLIB_DIR)/lsqlite3.so : sqlite/lsqlite3.c sqlite/sqlite3.c
@@ -52,7 +52,7 @@ $(LUACLIB_DIR)/msgpack.so : lmsgpack.c
 $(LUACLIB_DIR)/lzf.so : lzf/llzf.c lzf/lzf_c.c lzf/lzf_d.c
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
 
-$(LUACLIB_DIR)/lmisc.so : misc/lmisc.c misc/algo.c misc/xxhash.c misc/bresenham.c misc/levenshtein.c
+$(LUACLIB_DIR)/misc.so : misc/lmisc.c misc/algo.c misc/xxhash.c misc/bresenham.c misc/levenshtein.c
 	$(CC) $(CFLAGS) -Wno-unused-function $(SHARED) $^ -o $@	
 
 $(LUACLIB_DIR)/lkazmath.so : kazmath/lkazmath.c kazmath/kazmath/*.c

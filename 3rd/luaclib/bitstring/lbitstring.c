@@ -302,7 +302,7 @@ static int opencls_bitstring(lua_State *L)
 	return 1;
 }
 
-int luaopen_lbs(lua_State* L)
+int luaopen_bitstring(lua_State* L)
 {
 	luaL_Reg lfuncs[] = {
 		{"new", lua__bs_new},

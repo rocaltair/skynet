@@ -410,11 +410,13 @@ int luaopen_misc(lua_State* L)
 	};
 	lua_pushcfunction(L, lua__print);
 	lua_setglobal(L, "print");
+	/*
 	lua_pushcfunction(L, lua__xpcall);
 	lua_setglobal(L, "xpcall");
 	lua_getglobal(L, "debug");
 	lua_pushcfunction(L, lua_setInvokeLimit);
 	lua_setfield(L, -2, "setInvokeLimit");
+	*/
 	lua_pop(L, 1);
 	luaL_newlib(L, lfuncs);
 	return 1;
