@@ -6,13 +6,18 @@ LUACLIB_NAMES = ldump \
 		cjson laoi \
 		lunix lfs proc bitstring lcrypto \
 		lhttpparser \
-		lastar msgpack lzf lkazmath misc #lsqlite3 iconv 
+		lastar msgpack lzf lkazmath misc iconv #lsqlite3
 
 CFLAGS = -g -O2 -Wall -I$(LUA_INC) $(MYCFLAGS)
 LUA_INC ?= ../lua
 
-ALL_LIBS = $(foreach v, $(LUACLIB_NAMES), $(LUACLIB_DIR)/$(v).so) 
+ifeq ($(PLAT), linux)
+LDFLAGS = -Wl,-R/usr/local/lib
+else
+LDFLAGS = -L/usr/local/lib
+endif
 
+ALL_LIBS = $(foreach v, $(LUACLIB_NAMES), $(LUACLIB_DIR)/$(v).so) 
 
 all: $(ALL_LIBS)
 
@@ -23,7 +28,7 @@ $(LUACLIB_DIR)/lhttpparser.so : http-parser/lua-http-parser.c http-parser/http-p
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
 $(LUACLIB_DIR)/lcrypto.so : crypto/lcrypto.c | $(LUACLIB_DIR)
-	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -lcrypto $^ -o $@
+	$(CC) $(CFLAGS) $(SHARED) $(LDFLAGS) -lcrypto $^ -o $@
 
 $(LUACLIB_DIR)/laoi.so : aoi/aoi.c aoi/laoi.c | $(LUACLIB_DIR)
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
@@ -38,7 +43,7 @@ $(LUACLIB_DIR)/lfs.so : lfs.c| $(LUACLIB_DIR)
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
 $(LUACLIB_DIR)/iconv.so : liconv.c |  $(LUACLIB_DIR)
-	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -rpath/usr/local/lib -liconv $^ -o $@
+	$(CC) $(CFLAGS) $(SHARED) $(LDFLAGS) -liconv $^ -o $@
 
 $(LUACLIB_DIR)/bitstring.so : bitstring/lbitstring.c | $(LUACLIB_DIR)
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
