@@ -2,65 +2,70 @@ include ../../platform.mk
 
 LUACLIB_DIR = ../../luaclib
 
-LUACLIB_NAMES = cjson laoi ldump\
+LUACLIB_NAMES = ldump \
+		cjson laoi \
 		lunix lfs proc bitstring lcrypto \
 		lhttpparser \
-		lastar msgpack lzf iconv lkazmath misc #lsqlite3 
+		lastar msgpack lzf lkazmath misc #lsqlite3 iconv 
 
 CFLAGS = -g -O2 -Wall -I$(LUA_INC) $(MYCFLAGS)
 LUA_INC ?= ../lua
 
 ALL_LIBS = $(foreach v, $(LUACLIB_NAMES), $(LUACLIB_DIR)/$(v).so) 
 
+
 all: $(ALL_LIBS)
 
-$(LUACLIB_DIR)/cjson.so : lcjson/lcjson.c lcjson/strbuf.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
-
-$(LUACLIB_DIR)/lhttpparser.so : http-parser/lua-http-parser.c http-parser/http-parser/http_parser.c
+$(LUACLIB_DIR)/cjson.so : lcjson/lcjson.c lcjson/strbuf.c | $(LUACLIB_DIR)
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/lcrypto.so : crypto/lcrypto.c
-	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -lcrypto $^ -o $@	
+$(LUACLIB_DIR)/lhttpparser.so : http-parser/lua-http-parser.c http-parser/http-parser/http_parser.c | $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/laoi.so : aoi/aoi.c aoi/laoi.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/lcrypto.so : crypto/lcrypto.c | $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -lcrypto $^ -o $@
 
-$(LUACLIB_DIR)/lunix.so : lunix.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/laoi.so : aoi/aoi.c aoi/laoi.c | $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/ldump.so : ldump.c
-	$(CC) $(CFLAGS) -Wno-unused-function $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/lunix.so : lunix.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/lfs.so : lfs.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/ldump.so : ldump.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) -Wno-unused-function $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/iconv.so : liconv.c
-	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -liconv $^ -o $@	
+$(LUACLIB_DIR)/lfs.so : lfs.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/bitstring.so : bitstring/lbitstring.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/iconv.so : liconv.c |  $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -rpath/usr/local/lib -liconv $^ -o $@
 
-$(LUACLIB_DIR)/lsqlite3.so : sqlite/lsqlite3.c sqlite/sqlite3.c
-	$(CC) $(CFLAGS) -Wno-unused-const-variable -Wno-deprecated-declarations $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/bitstring.so : bitstring/lbitstring.c | $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/proc.so : proc/lproc.c proc/proc.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/lsqlite3.so : sqlite/lsqlite3.c sqlite/sqlite3.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) -Wno-unused-const-variable -Wno-deprecated-declarations $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/lastar.so : astar/astar.c astar/lastar.c
-	$(CC) $(CFLAGS) -Wno-unused-function $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/proc.so : proc/lproc.c proc/proc.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/msgpack.so : lmsgpack.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/lastar.so : astar/astar.c astar/lastar.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) -Wno-unused-function $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/lzf.so : lzf/llzf.c lzf/lzf_c.c lzf/lzf_d.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/msgpack.so : lmsgpack.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/misc.so : misc/lmisc.c misc/algo.c misc/xxhash.c misc/bresenham.c misc/levenshtein.c
-	$(CC) $(CFLAGS) -Wno-unused-function $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/lzf.so : lzf/llzf.c lzf/lzf_c.c lzf/lzf_d.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
-$(LUACLIB_DIR)/lkazmath.so : kazmath/lkazmath.c kazmath/kazmath/*.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/misc.so : misc/lmisc.c misc/algo.c misc/xxhash.c misc/bresenham.c misc/levenshtein.c | $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) -Wno-unused-function $(SHARED) $^ -o $@
+
+$(LUACLIB_DIR)/lkazmath.so : kazmath/lkazmath.c kazmath/kazmath/*.c| $(LUACLIB_DIR)
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
+
+$(LUACLIB_DIR):
+	mkdir -p $@
 
 clean:
 	@rm -f $(ALL_LIBS)

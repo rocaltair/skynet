@@ -21,7 +21,8 @@ unsigned int levenshtein(const char *word1, const char *word2, int case_sen) {
 	unsigned int len1 = strlen(word1),
 		     len2 = strlen(word2);
 	unsigned int *v = calloc(len2 + 1, sizeof(unsigned int));
-	unsigned int i, j, current, next, cost;
+	unsigned int i, j, current, cost;
+	unsigned int next = 0;
 	eq_func eq = case_sen ? ls_case_sen_eq : ls_case_insen_eq;
 
 	/* strip common prefixes */
