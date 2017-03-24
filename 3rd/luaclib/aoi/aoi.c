@@ -13,6 +13,7 @@ Please see examples for more details.
 
 #include "aoi.h"
 #include <math.h>
+#include <inttypes.h>
 
 #ifdef _WIN32
 #ifdef __cplusplus
@@ -201,10 +202,10 @@ void iaoimemorystate() {
 	int count = __countof(gmetas);
 	int i;
 	ilog("[AOI-Memory] *************************************************************** Begin\n");
-	ilog("[AOI-Memory] Total---> new: %lld, free: %lld, hold: %lld \n", gcallocsize, gfreesize, gholdsize);
+	ilog("[AOI-Memory] Total---> new: %" PRId64 ", free: %" PRId64 ", hold: %" PRId64 " \n", gcallocsize, gfreesize, gholdsize);
 
 	for (i=0; i<count; ++i) {
-		ilog("[AOI-Memory] Obj: (%s, %d) ---> alloc: %lld, free: %lld, hold: %lld - count: %lld\n",
+		ilog("[AOI-Memory] Obj: (%s, %d) ---> alloc: %" PRId64 ", free: %" PRId64 ", hold: %" PRId64 " - count: %" PRId64 "\n",
 				gmetas[i].name,	gmetas[i].size,
 				gmetas[i].alloced, gmetas[i].freed, gmetas[i].current,
 				gmetas[i].current/(gmetas[i].size+sizeof(iobj)));
@@ -585,7 +586,7 @@ int icirclerelation(const icircle *con, const icircle *c) {
 
 #define __Since(t) (__Micros - t)
 
-#define iplogwhen(t, when, ...) do { if(open_log_profile && t > when) {printf("[PROFILE] Take %lld micros ", t); printf(__VA_ARGS__); } } while (0)
+#define iplogwhen(t, when, ...) do { if(open_log_profile && t > when) {printf("[PROFILE] Take %" PRId64 " micros ", t); printf(__VA_ARGS__); } } while (0)
 
 #define iplog(t, ...) iplogwhen(t, __ProfileThreashold, __VA_ARGS__)
 
@@ -1232,7 +1233,7 @@ int justaddunit(imap *map, inode *node, iunit *unit){
 #endif
 
 #if open_log_unit
-	ilog("[IMAP-Unit] Add Unit (%lld, %s) To Node (%d, %s)\n",
+	ilog("[IMAP-Unit] Add Unit (%" PRId64 ", %s) To Node (%d, %s)\n",
 			unit->id, unit->code.code, node->level, node->code.code);
 #endif
 	list_add_front(node->units, unit);
@@ -1252,7 +1253,7 @@ int justremoveunit(imap *map, inode *node, iunit *unit) {
 	icheckret(node->level == map->divide, iino);
 
 #if open_log_unit
-	ilog("[IMAP-Unit] Remove Unit (%lld, %s) From Node (%d, %s)\n",
+	ilog("[IMAP-Unit] Remove Unit (%" PRId64 ", %s) From Node (%d, %s)\n",
 			unit->id, unit->code.code, node->level, node->code.code);
 #endif
 
@@ -1282,14 +1283,14 @@ int justremoveunit(imap *map, inode *node, iunit *unit) {
 /* 打印单元加入节点的操作 */
 #define _print_unit_add(node, unit, idx) \
 	do { \
-		ilog("[IMAP-Unit-Add] Unit(%lld, %s, x: %.3f, y: %.3f) To Node (%d, %s, %p) \n", \
+		ilog("[IMAP-Unit-Add] Unit(%" PRId64 ", %s, x: %.3f, y: %.3f) To Node (%d, %s, %p) \n", \
 				unit->id, unit->code.code, unit->code.pos.x, unit->code.pos.y, node->level, node->code.code, node); \
 	}while(0)
 
 /* 打印单元移除出节点的操作 */
 #define _print_unit_remove(node, unit, idx) \
 	do {\
-		ilog("[IMAP-Unit-Remove] Unit(%lld, %s, x: %.3f, y: %.3f) From Node (%d, %s, %p) \n", \
+		ilog("[IMAP-Unit-Remove] Unit(%" PRId64 ", %s, x: %.3f, y: %.3f) From Node (%d, %s, %p) \n", \
 				unit->id, unit->code.code, unit->code.pos.x, unit->code.pos.y, node->level, node->code.code, node);\
 	}while(0)
 
@@ -1457,7 +1458,7 @@ int imapaddunitto(imap *map, inode *node, iunit *unit, int idx) {
 
 	code = unit->code.code[idx];
 #if open_log_code
-	ilog("[IMAP-Code] (%lld, %s, %p) Code %d, Idx: %d, Divide: %d\n", unit->id, unit->code.code, unit, code, idx, map->divide);
+	ilog("[IMAP-Code] (%" PRId64 ", %s, %p) Code %d, Idx: %d, Divide: %d\n", unit->id, unit->code.code, unit, code, idx, map->divide);
 #endif
 
 	/* 节点不需要查找了，或者以及达到最大层级 */
@@ -1827,13 +1828,13 @@ void imapstatedesc(const imap *map, int require,
 	}
 	/* 节点信息 */
 	if (require & EnumMapStateNode) {
-		ilog("%s Node: Count=%lld\n", tag, map->state.nodecount);
-		ilog("%s Node-Leaf: Count=%lld\n", tag, map->state.leafcount);
+		ilog("%s Node: Count=%" PRId64 "\n", tag, map->state.nodecount);
+		ilog("%s Node-Leaf: Count=%" PRId64 "\n", tag, map->state.leafcount);
 		ilog("%s Node-Cache: Count=%d\n", tag, irefcachesize(map->nodecache));
 	}
 	/* 单元信息 */
 	if (require & EnumMapStateUnit) {
-		ilog("%s Unit: Count=%lld\n", tag, map->state.unitcount);
+		ilog("%s Unit: Count=%" PRId64 "\n", tag, map->state.unitcount);
 	}
 	/* 状态尾 */
 	if (require & EnumMapStateTail || inhead) {
@@ -1929,12 +1930,12 @@ int imapaddunit(imap *map, iunit *unit) {
 
 	/* log it */
 #if open_log_unit
-	ilog("[IMAP-Unit] Add Unit: %lld - (%.3f, %.3f) - %s\n",
+	ilog("[IMAP-Unit] Add Unit: %" PRId64 " - (%.3f, %.3f) - %s\n",
 			unit->id, unit->pos.x, unit->pos.y, unit->code.code);
 #endif
 	micro = __Micros;
 	ok = imapaddunitto(map, map->root, unit, 0);
-	iplog(__Since(micro), "[IMAP-Unit] Add Unit: %lld - (%.3f, %.3f) - %s\n",
+	iplog(__Since(micro), "[IMAP-Unit] Add Unit: %" PRId64 " - (%.3f, %.3f) - %s\n",
 			unit->id, unit->pos.x, unit->pos.y, unit->code.code);
 	return ok;
 }
@@ -1950,13 +1951,13 @@ int imapremoveunit(imap *map, iunit *unit) {
 
 	/* log it */
 #if open_log_unit
-	ilog("[IMAP-Unit] Remove Unit: %lld - (%.3f, %.3f) - %s\n",
+	ilog("[IMAP-Unit] Remove Unit: %" PRId64 " - (%.3f, %.3f) - %s\n",
 			unit->id, unit->pos.x, unit->pos.y, unit->code.code);
 #endif
 	micro = __Micros;
 	ok = imapremoveunitfrom(map, map->root, unit, 0, map->root);
 	iplog(__Since(micro), "[IMAP-Unit] Remove Unit: "
-			"%lld - (%.3f, %.3f) - %s\n",
+			"%" PRId64 " - (%.3f, %.3f) - %s\n",
 			unit->id, unit->pos.x, unit->pos.y, unit->code.code);
 
 	return ok;
@@ -2103,7 +2104,7 @@ int imapupdateunit(imap *map, iunit *unit) {
         _imaprefreshutick(impact, utick);
 	}
 #endif
-	iplog(__Since(micro), "[MAP-Unit] Update  Unit(%lld) To (%s, %.3f, %.3f)\n",
+	iplog(__Since(micro), "[MAP-Unit] Update  Unit(%" PRId64 ") To (%s, %.3f, %.3f)\n",
 			unit->id, code.code, code.pos.x, code.pos.y);
 
 	return ok;
@@ -2314,7 +2315,7 @@ int _ientryfilter_circle(imap *map, const ifilter *filter, const iunit* unit) {
 	/* 距离超出范围 */
 	if (icircleintersect(&filter->s.u.circle, &ucircle) == iino) {
 #if open_log_filter
-		ilog("[MAP-Filter] NO : Unit: %lld (%.3f, %.3f : %.3f) - (%.3f, %.3f: %.3f)\n",
+		ilog("[MAP-Filter] NO : Unit: %" PRId64 " (%.3f, %.3f : %.3f) - (%.3f, %.3f: %.3f)\n",
 				unit->id,
 				unit->pos.x, unit->pos.y,
 				unit->radius,
@@ -2326,7 +2327,7 @@ int _ientryfilter_circle(imap *map, const ifilter *filter, const iunit* unit) {
 	/* 距离超出范围 */
 	if (icirclecontainspoint(&filter->s.u.circle, &unit->pos) == iino) {
 #if open_log_filter
-		ilog("[MAP-Filter] NO : Unit: %lld (%.3f, %.3f) - (%.3f, %.3f: %.3f)\n",
+		ilog("[MAP-Filter] NO : Unit: %" PRId64 " (%.3f, %.3f) - (%.3f, %.3f: %.3f)\n",
 				unit->id,
 				unit->pos.x, unit->pos.y,
 				filter->s.u.circle.pos.x, filter->s.u.circle.pos.y, filter->s.u.circle.radis);
@@ -2372,7 +2373,7 @@ static int _ientryfilter_rect(imap *map, const ifilter *filter, const iunit* uni
 	c.radius = unit->radius;
 	if (irectintersect(&filter->s.u.rect, &c) == iino) {
 #if open_log_filter
-		ilog("[MAP-Filter] NO : Unit: %lld (%.3f, %.3f: %.3f)"
+		ilog("[MAP-Filter] NO : Unit: %" PRId64 " (%.3f, %.3f: %.3f)"
 				" Not In Rect (%.3f, %.3f:%.3f, %.3f) \n",
 				unit->id,
 				unit->pos.x, unit->pos.y, unit->radius,
@@ -2386,7 +2387,7 @@ static int _ientryfilter_rect(imap *map, const ifilter *filter, const iunit* uni
 	/* 距离超出范围 */
 	if (irectcontainspoint(&filter->s.u.rect, &unit->pos) == iino) {
 #if open_log_filter
-		ilog("[MAP-Filter] NO : Unit: %lld (%.3f, %.3f)"
+		ilog("[MAP-Filter] NO : Unit: %" PRId64 " (%.3f, %.3f)"
 				" Not In Rect (%.3f, %.3f:%.3f, %.3f) \n",
 				unit->id,
 				unit->pos.x, unit->pos.y,
@@ -2822,9 +2823,9 @@ void _aoi_printnode(int require, const inode *node, const char* prefix, int tail
 	ilog("[%s]", node->code.code);
 	/* 打印节点时间戳 */
 	if (require & EnumNodePrintStateTick) {
-		ilog(" tick(%lld", node->tick);
+		ilog(" tick(%" PRId64 "", node->tick);
 #if open_node_utick
-		ilog(",%lld", node->utick);
+		ilog(",%" PRId64 "", node->utick);
 #endif
 		ilog(")");
 	}
@@ -2833,7 +2834,7 @@ void _aoi_printnode(int require, const inode *node, const char* prefix, int tail
 		iunit *u = node->units;
 		ilog(" units(");
 		while (u) {
-			ilog("%lld%s", u->id, u->next ? ",":")");
+			ilog("%" PRId64 "%s", u->id, u->next ? ",":")");
 			u= u->next;
 		}
 	}

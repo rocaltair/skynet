@@ -6,15 +6,37 @@
 #include <string.h>
 #include <ctype.h>
 
-#if (LUA_VERSION_NUM < 502 && !defined(luaL_newlib))
+#if (LUA_VERSION_NUM < 502)
+# ifndef luaL_newlib
 #  define luaL_newlib(L,l) (lua_newtable(L), luaL_register(L,NULL,l))
 # endif
+# ifndef lua_rawlen
+#  define lua_rawlen(L, l) lua_objlen(L, l)
+# endif
+# endif
 
-#define LUAI_MAXNUMBER2STR 32L
+#ifndef LDUMP_MAXNUMBER2STR
+# define LDUMP_MAXNUMBER2STR 32L
+#endif
+
 #ifndef LUA_INTEGER_FMT
 # define LUA_INTEGER_FMT "%ld"
-# define lua_integer2str(s, sz, n) sprintf((s), LUA_INTEGER_FMT, (n))
 #endif
+
+#ifndef LDUMP_NUMBER_FMT
+# define LDUMP_NUMBER_FMT "%.7g"
+#endif
+
+#ifdef lua_integer2str
+# undef lua_integer2str
+#endif
+# define lua_integer2str(s, sz, n) sprintf((s), LUA_INTEGER_FMT, (n))
+
+#ifdef lua_number2str
+# undef lua_number2str
+#endif
+# define lua_number2str(s, sz, n) sprintf((s), LDUMP_NUMBER_FMT, (n))
+
 #define DEFAULT_TINY_BUFF_SIZE 1024 * 512
 
 #ifndef RBUF_RATIO_SIZE
@@ -229,8 +251,8 @@ static void conv_key(lua_State *L, int index, rbuf_t *tb)
                         break;
                 }    
                 case LUA_TNUMBER: {    
-                        char s[LUAI_MAXNUMBER2STR];
-                        size_t len = (size_t)lua_number2str(s, LUAI_MAXNUMBER2STR, luaL_checknumber(L, index));
+                        char s[LDUMP_MAXNUMBER2STR];
+                        size_t len = (size_t)lua_number2str(s, LDUMP_MAXNUMBER2STR, luaL_checknumber(L, index));
                         /* 整数类型才加上[] */
 			rbuf_catlen(tb, "[", 1);
 			rbuf_catlen(tb, s, len);
@@ -258,8 +280,8 @@ static void conv_simple_type(lua_State *L, int index, rbuf_t *tb)
                 /* 这儿不能够直接使用lua_tostring，因为这个api会修改栈内容，将导致array的lua_next访问异常。 */
                 /* 也不能够强行把lua_Number转换为%d输出。 */
                 case LUA_TNUMBER: {
-                        char s[LUAI_MAXNUMBER2STR];
-                        size_t len = (size_t)lua_number2str(s, LUAI_MAXNUMBER2STR, luaL_checknumber(L, index));
+                        char s[LDUMP_MAXNUMBER2STR];
+                        size_t len = (size_t)lua_number2str(s, LDUMP_MAXNUMBER2STR, luaL_checknumber(L, index));
 			rbuf_catlen(tb, s, len);
                         break;
 		}
@@ -344,9 +366,9 @@ static int conv_mix_data(lua_State *L, int depth, rbuf_t *tb, int enable_comment
 					return 0;
 				}
 				if (!is_in_line && enable_comment) {
-					char s[LUAI_MAXNUMBER2STR];
+					char s[LDUMP_MAXNUMBER2STR];
 					rbuf_catlen(tb, ", --", 4);
-					lua_integer2str(s, LUAI_MAXNUMBER2STR, (lua_Integer)i);
+					lua_integer2str(s, LDUMP_MAXNUMBER2STR, (lua_Integer)i);
 					rbuf_cat(tb, s);
 				} else {
 					rbuf_catlen(tb, ",", 1);

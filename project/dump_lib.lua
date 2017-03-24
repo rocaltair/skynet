@@ -14,8 +14,8 @@ local liblist = {
 }
 
 local luaclibs = {
- 	-- "mysqlaux", "cluster", "multicast",
-	"lcrypto", "iconv",
+ 	-- "mysqlaux", "cluster", "multicast", "iconv",
+	"lcrypto", 
 	"bson", "cjson", "clientsocket", "bitstring",
 	"crypt",  "debugchannel", "laoi", "lastar",
 	"ldump", "lfs", "lkazmath", "misc",
