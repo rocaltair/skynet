@@ -1,5 +1,6 @@
 local skynet = require "skynet"
 local socket = require "socket"
+local ltrace = require "ltrace"
 
 skynet.start(function()
 	local host = "0.0.0.0:12345"
@@ -18,4 +19,6 @@ skynet.start(function()
 		end
 		socket.close(peer)
 	end)
+
+	skynet.newservice("debug_console", 10240)
 end)

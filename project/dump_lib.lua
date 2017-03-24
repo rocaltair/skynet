@@ -13,6 +13,18 @@ local liblist = {
 	"snax.msgserver",
 }
 
+local luaclibs = {
+ 	-- "mysqlaux", "cluster", "multicast",
+	"lcrypto", "iconv",
+	"bson", "cjson", "clientsocket", "bitstring",
+	"crypt",  "debugchannel", "laoi", "lastar",
+	"ldump", "lfs", "lkazmath", "misc",
+	"lpeg", "lunix", "lzf", "md5", "memory",
+	"msgpack",  "netpack",
+	"proc", "profile", "sharedata",
+	"socketdriver", "sproto", "stm",
+}
+
 function pairs_orderly(t, comp)
 	local keys = {}
 	for k, _ in pairs(t) do
@@ -73,8 +85,11 @@ function show_lib_byname(name)
 	end
 end
 
-
 function dump()
+	for k, v in pairs(luaclibs) do
+		show_lib_byname(v)
+	end
+
 	for k, v in pairs(liblist) do
 		show_lib_byname(v)
 	end

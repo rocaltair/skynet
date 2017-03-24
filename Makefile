@@ -134,7 +134,16 @@ $(LUA_CLIB_PATH)/mysqlaux.so : lualib-src/lua-mysqlaux.c | $(LUA_CLIB_PATH)
 $(LUA_CLIB_PATH)/debugchannel.so : lualib-src/lua-debugchannel.c | $(LUA_CLIB_PATH)
 	$(CC) $(CFLAGS) $(SHARED) -Iskynet-src $^ -o $@	
 
+tags :
+	ctags -R --languages=c \
+		--exclude=sqlite3.c \
+		--exclude=lsqlite3.c \
+		--exclude=lcrypto.c \
+		--exclude=aoi.c \
+		--exclude=kazmath
+
 clean :
+	rm -f tags
 	rm -f $(SKYNET_BUILD_PATH)/skynet $(CSERVICE_PATH)/*.so $(LUA_CLIB_PATH)/*.so
 	cd 3rd/luaclib/ && $(MAKE) clean
 
