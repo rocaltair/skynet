@@ -4,6 +4,7 @@ LUACLIB_DIR = ../../luaclib
 
 LUACLIB_NAMES = cjson laoi ldump\
 		lunix lfs proc bitstring lcrypto \
+		lhttpparser \
 		lastar msgpack lzf iconv lkazmath misc #lsqlite3 
 
 CFLAGS = -g -O2 -Wall -I$(LUA_INC) $(MYCFLAGS)
@@ -15,6 +16,9 @@ all: $(ALL_LIBS)
 
 $(LUACLIB_DIR)/cjson.so : lcjson/lcjson.c lcjson/strbuf.c
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+
+$(LUACLIB_DIR)/lhttpparser.so : http-parser/lua-http-parser.c http-parser/http-parser/http_parser.c
+	$(CC) $(CFLAGS) $(SHARED) $^ -o $@
 
 $(LUACLIB_DIR)/lcrypto.so : crypto/lcrypto.c
 	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -lcrypto $^ -o $@	
