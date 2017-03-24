@@ -2136,7 +2136,7 @@ LUACRYPTO_API void luacrypto_set_info(lua_State * L)
 ** Creates the metatables for the objects and registers the
 ** driver open method.
 */
-LUACRYPTO_API int luaopen_crypto(lua_State * L)
+LUACRYPTO_API int luaopen_lcrypto(lua_State * L)
 {
 	struct luaL_Reg core[] = {
 		{NULL, NULL},

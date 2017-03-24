@@ -3,8 +3,8 @@ include ../../platform.mk
 LUACLIB_DIR = ../../luaclib
 
 LUACLIB_NAMES = cjson laoi ldump\
-		lunix lfs proc bitstring crypto \
-		lastar msgpack lzf liconv lkazmath misc #lsqlite3 
+		lunix lfs proc bitstring lcrypto \
+		lastar msgpack lzf iconv lkazmath misc #lsqlite3 
 
 CFLAGS = -g -O2 -Wall -I$(LUA_INC) $(MYCFLAGS)
 LUA_INC ?= ../lua
@@ -16,8 +16,8 @@ all: $(ALL_LIBS)
 $(LUACLIB_DIR)/cjson.so : lcjson/lcjson.c lcjson/strbuf.c
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
 
-$(LUACLIB_DIR)/crypto.so : crypto/lcrypto.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/lcrypto.so : crypto/lcrypto.c
+	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -lcrypto $^ -o $@	
 
 $(LUACLIB_DIR)/laoi.so : aoi/aoi.c aoi/laoi.c
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
@@ -31,8 +31,8 @@ $(LUACLIB_DIR)/ldump.so : ldump.c
 $(LUACLIB_DIR)/lfs.so : lfs.c
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
 
-$(LUACLIB_DIR)/liconv.so : liconv.c
-	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
+$(LUACLIB_DIR)/iconv.so : liconv.c
+	$(CC) $(CFLAGS) $(SHARED) -L/usr/local/lib -liconv $^ -o $@	
 
 $(LUACLIB_DIR)/bitstring.so : bitstring/lbitstring.c
 	$(CC) $(CFLAGS) $(SHARED) $^ -o $@	
